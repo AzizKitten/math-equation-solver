@@ -361,7 +361,7 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
         raise ValueError("Left/right hand side cannot be empty.")
     if (expression.replace(" ","")).count("x") == 0:
         raise ValueError("The expression must contain the variable x.")
-    if any(left_side[-1] == avoid for avoid in ["-","^","+","*","/","%"]) or any(left_side[0] == avoid for avoid in ["*","/","%","^"]) or any(right_side[0] == avoid for avoid in ["*","/","%","^"]) or any(right_side[-1] == avoid for avoid in ["-","^","+","*","/","%"]):
+    if any(left_side[-1] == avoid for avoid in ["-","+","*","/","%"]) or any(left_side[0] == avoid for avoid in ["*","/","%"]) or any(right_side[0] == avoid for avoid in ["*","/","%"]) or any(right_side[-1] == avoid for avoid in ["-","+","*","/","%"]):
         raise ValueError("The expression contains uncompleted operation.")
     if interval_end < interval_start:
         raise ValueError("The interval_start must be less than or equal to the interval_end.")
@@ -382,6 +382,13 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
                     raise TypeError("Deprived values of the list must be float or integer.")
     def func(x):
         return eval(left_side)-eval(right_side)
+    test = 0
+    try:
+        func(test)
+    except SyntaxError:
+        raise SyntaxError("There was a problem in the giving expression.")
+    except:
+        pass
     R_solutions = []
     C_solutions = []
     R_result = []
@@ -392,8 +399,14 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
         while status:
             try:
                 f = func(x)
+                while type(f) is complex:
+                    x = randint(-100, 100)
+                    f = func(x)
             except OverflowError or ValueError:
                 x = randint(-10, 10)
+                continue
+            except ZeroDivisionError:
+                x += 1
                 continue
             except:
                 if interval_start == float("-inf") and interval_end == float("inf"):
@@ -419,6 +432,7 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
             try:
                 f_prime = derivative(func, x)
                 x -= f/f_prime
+                
             except:
                 x += 1
     def solve_in_C():
@@ -426,8 +440,13 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
         while status:
             try:
                 f = func(x)
+            except SyntaxError:
+                raise SyntaxError("There is a problem in the expression.")
             except OverflowError or ValueError:
                 x = randint(-10,10)+randint(-10, 10)*1j
+                continue
+            except ZeroDivisionError:
+                x += 1 + 1j
                 continue
             except:
                 x = randint(-100, 100)+randint(-100, 100)*1j
