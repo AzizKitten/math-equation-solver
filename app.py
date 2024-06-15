@@ -548,6 +548,11 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
                 result.append(C_result[i])
     return result
 
+st.set_page_config(
+    page_title="Math Bot",
+    page_icon="img/favicon.png"
+)
+
 def main():
     st.title("Math equation solver")
     expression = st.text_input("Enter the expression: (Required)")
