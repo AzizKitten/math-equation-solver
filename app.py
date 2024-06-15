@@ -10,6 +10,9 @@ def install_package(package_name):
     install_command = [python_executable, "-m", "pip", "install", "--upgrade", package_name]
     subprocess.run(install_command, check=True)
 
+install_package("AzizKitten")
+from AzizKitten import derivative, sin, cos, tan, cot, sec, csc, asin, acos, atan, acot, asec, acsc, sinh, cosh, tanh, coth, sech, csch, floor, ceil, ln, log, integrate, exp, gcd, lcm, factorial, sqrt, cbrt
+
 def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solutions: int=None , interval_start: float=float("-inf"), interval_end: float=float("inf"), deprived_start: float=None, deprived_end: float=None, deprived_values: list=None) -> list:
     """
     return the solutions for the giving expression.
@@ -138,8 +141,6 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
     for sol in R_solutions:
         if type(sol) != complex:
             eliminated_sol_from_R.append(sol)
-        elif abs(sol.imag) < 1e-10:
-            eliminated_sol_from_R.append(sol.real)
     R_solutions = eliminated_sol_from_R
     if len(R_solutions) != 0:
         R_solutions[0] = round(R_solutions[0],10)
@@ -263,8 +264,6 @@ def main():
         'Name': ["Addition","Subtraction","Multiplication","Division","Exponentiation","Modulus","Floor division","Square root","Cubic root","Sine","Cosine","Tangent","Cotangent","Secant","Cosecant","arc Sine","arc Cosine","arc Tangent","arc Cotangent","arc Secant","arc Cosecant","Hyperbolic Sine","Hyperbolic Cosine","Hyperbolic Tangent","Hyperbolic Cotangent","Hyperbolic Secant","Hyperbolic Cosecant","Floor","Ceiling","Greatest Common Divisor","Least Common Multiple","Factorial","Integral","Exponential","Logarithm","Natural Logarithm","Derivative"]
     }
     st.table(data)
-    
+
 if __name__ == "__main__":
     main()
-    install_package("AzizKitten")
-    from AzizKitten import *
