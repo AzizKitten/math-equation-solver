@@ -2,16 +2,335 @@ import streamlit as st
 from random import randint
 from threading import Thread
 from time import sleep
-import sys
-import subprocess
+e = 2.718281828459045090795598298427648842334747314453125
+pi = 3.141592653589793115997963468544185161590576171875
 
-def install_package(package_name):
-    python_executable = sys.executable
-    install_command = [python_executable, "-m", "pip", "install", "--upgrade", package_name]
-    subprocess.run(install_command, check=True)
+def sinh(x: float | complex) -> float | complex:
+    """
+    Return the hyperbolic sine of x.
+    """
+    return (e**x-e**(-x))/2
 
-install_package("AzizKitten")
-from AzizKitten import derivative, sin, cos, tan, cot, sec, csc, asin, acos, atan, acot, asec, acsc, sinh, cosh, tanh, coth, sech, csch, floor, ceil, ln, log, integrate, exp, gcd, lcm, factorial, sqrt, cbrt
+def cosh(x: float | complex) -> float | complex:
+    """
+    Return the hyperbolic cosine of x.
+    """
+    return (e**x+e**(-x))/2
+
+def tanh(x: float | complex) -> float | complex:
+    """
+    Return the hyperbolic tangent of x.
+    """
+    return sinh(x)/cosh(x)
+
+def coth(x: float | complex) -> float | complex:
+    """
+    Return the hyperbolic cotangent of x.
+    """
+    return cosh(x)/sinh(x)
+
+def sech(x: float | complex) -> float | complex:
+    """
+    Return the hyperbolic secant of x.
+    """
+    return 1/cosh(x)
+
+def csch(x: float | complex) -> float | complex:
+    """
+    Return the hyperbolic cosecant of x.
+    """
+    return 1/sinh(x)
+
+def sqrt(x: float | complex) -> float | complex:
+    """
+    Return the square root of x.
+    """
+    if type(x) is not complex:
+        if x <= 0:
+            return (-x)**.5*1j
+    return x**.5
+
+def gcd(a:int,b:int) -> int:
+    """
+    Return the greatest common divisor of two integers a and b.
+    """
+    while b != 0:
+        a, b = b, a % b
+    return a
+
+def lcm(a:int,b:int) -> int:
+    """
+    Return the least common multiple of two integers a and b.
+    """
+    return abs(a*b) // gcd(a,b)
+
+def floor(x: float) -> int:
+    """
+    Return the floor of x, the largest integer less than or equal to x.
+    """
+    if x == int(x) or x >= 0:
+        return int(x)
+    return int(x)-1
+
+def ceil(x: float) -> int:
+    """
+    Return the ceiling of x, the smallest integer greater than or equal to x.
+    """
+    if x == int(x) or x <= 0:
+        return int(x)
+    return int(x)+1
+
+def exp(x: float | complex) -> float | complex:
+    """
+    Return the exponential function of x.
+    """
+    return e**x
+
+def ln(x: float | complex) -> float | complex:
+    """
+    Return the natural logarithm of x.
+    """
+    if x == 0:
+        raise ValueError("Value input must be different to 0.")
+    if type(x) is not complex:
+        if x > 0:
+            if x == 1:
+                return 0
+            y = x
+            while True:
+                f = exp(y) - x
+                f_prime = exp(y)
+                if abs(f_prime) < 1e-6:
+                    y += 1
+                else:
+                    y -= f/f_prime
+                    if abs(f) < 1e-12:
+                        return y
+        y = abs(x)
+        if abs(x) == 1:
+            return pi*1j
+        while True:
+                f = exp(y) - abs(x)
+                f_prime = exp(y)
+                if abs(f_prime) < 1e-6:
+                    y += 1
+                else:
+                    y -= f/f_prime
+                    if abs(f) < 1e-12:
+                        return y + pi*1j
+    else:
+        a = x.real
+        b = x.imag
+        if a == 0:
+            return ln(b) + 1j*pi/2
+        return ln(abs(x)) + 1j*atan(b/a)
+
+def log(x: float, base=10) -> float | complex:
+    """
+    Return the logarithm of x in 'base'.
+
+    Default base is 10 for decimal logarithm.
+    """
+    return(ln(x)/ln(base))
+
+def integrate(integrand, lower_limit: float, upper_limit: float) -> float:
+    """
+    Return the result of the integral of 'integrand' from 'lower_limit' to 'upper_limit'.
+    """
+    n = 10000
+    if upper_limit >= 5000:
+        upper_limit = 5000
+    if upper_limit >= 5000:
+        upper_limit = -5000
+    if lower_limit >= 5000:
+        lower_limit = 5000
+    if lower_limit >= 5000:
+        lower_limit = -5000
+    
+    segment_width = (upper_limit - lower_limit) / n
+    result = 0.5 * (integrand(lower_limit) + integrand(upper_limit))
+    for i in range(1,n):
+        x_i = lower_limit + i * segment_width
+        result += integrand(x_i)
+    result *= segment_width
+    if result >= 1e10:
+        return float('inf')
+    elif result <= -1e10:
+        return float('-inf')
+    return result
+
+def factorial(x: float) -> float:
+    """
+    Return the factorial of x where x ∉ {-1, -2, -3, ...}.
+    """
+    if int(x) == x:
+        if x < 0:
+            raise ValueError("Factorial of a negative integer is undefined.")
+        else:
+            ans = 1
+            for i in range(1,int(x)+1):
+                ans *= i
+            return ans
+    def integrand(t):
+        return t**x * exp(-t)
+    return integrate(integrand, 0, 100)
+
+def sin(x: float | complex, deg=False) -> float | complex:
+    """
+    Return the sine of x.
+
+    Measured in radians as defualt.
+    """
+    if deg:
+        x = pi*(x/180)
+    if type(x) is not complex:
+        return ((e**(1j*x)-e**(1j*-x))/2j).real
+    if abs(((e**(1j*x)-e**(1j*-x))/2j).imag) < 1e-6:
+        return ((e**(1j*x)-e**(1j*-x))/2j).real
+    return (e**(1j*x)-e**(1j*-x))/2j
+
+def cos(x: float | complex, deg=False) -> float | complex:
+    """
+    Return the cosine of x.
+
+    Measured in radians as defualt.
+    """
+    if deg:
+        x = pi*(x/180)
+    if type(x) is not complex:
+        return ((e**(1j*x)+e**(1j*-x))/2).real
+    if abs(((e**(1j*x)+e**(1j*-x))/2).imag) < 1e-6:
+        return ((e**(1j*x)+e**(1j*-x))/2).real
+    return (e**(1j*x)+e**(1j*-x))/2
+
+def tan(x: float | complex, deg=False) -> float | complex:
+    """
+    Return the tangent of x.
+
+    Measured in radians as defualt.
+    """
+    if deg:
+        x = pi*(x/180)
+    return sin(x)/cos(x)
+
+def cot(x: float | complex, deg=False) -> float | complex:
+    """
+    Return the cotangent of x.
+
+    Measured in radians as defualt.
+    """
+    if deg:
+        x = pi*(x/180)
+    return cos(x)/sin(x)
+
+def sec(x:float | complex, deg=False) -> float | complex:
+    """
+    Return the secant of x.
+
+    Measured in radians as defualt.
+    """
+    if deg:
+        x = pi*(x/180)
+    return 1/cos(x)
+
+def csc(x: float | complex, deg=False) -> float | complex:
+    """
+    Return the cosecant of x.
+
+    Measured in radians as defualt.
+    """
+    if deg:
+        x = pi*(x/180)
+    return 1/sin(x)
+
+def asin(x: float) -> float:
+    """
+    Return the arc sine (measured in radians) of x.
+    """
+    if -1 <= x <= 1:
+        if x == 1:
+            return pi/2
+        elif x == -1:
+            return -(pi/2)
+        else:
+            def integrand(t):
+                return 1/(1-t**2)**.5
+            return integrate(integrand, 0, x)
+    raise ValueError("Value input must be in [-1 .. 1]")
+
+def acos(x: float) -> float:
+    """
+    Return the arc cosine (measured in randians) of x.
+    """
+    if -1 <= x <= 1:
+        return pi/2 - asin(x)
+    else:
+        raise ValueError("Value input must be in [-1 .. 1]")
+    
+def atan(x: float) -> float:
+    """
+    Return the arc tangent (measured in radians) of x.
+    """
+    def integrand(t):
+        return 1/(1+t**2)
+    return integrate(integrand, 0, x)
+
+def acot(x: float) -> float:
+    """
+    Return the arc cotangent (measured in radians) of x.
+    """
+    return atan(1/x)
+
+def asec(x:float) -> float:
+    """
+    Return the arc secant (measured in radians) of x.
+    """
+    return acos(1/x)
+
+def acsc(x:float) -> float:
+    """
+    Return the arc cosecant (measured in radians) of x.
+    """
+    return asin(1/x)
+
+def cbrt(x: float | complex) -> float | complex:
+    """
+    Return the cubic root of x.
+    """
+    if type(x) is complex:
+        a = x.real
+        b = x.imag
+        if a == 0:
+            return cbrt(b)*-1j
+        if b == 0:
+            return cbrt(a)
+        if a > 0 and b > 0:
+            return cbrt(sqrt(a**2+b**2))*exp(1j*(atan(b/a))/3)
+        if a > 0 and b < 0:
+            return cbrt(sqrt(a**2+b**2))*exp(1j*(2*pi-atan(-b/a))/3)
+        if a < 0 and b > 0:
+            return cbrt(sqrt(a**2+b**2))*exp(1j*(pi-atan(b/-a))/3)
+        return cbrt(sqrt(a**2+b**2))*exp(1j*(pi+atan(b/a))/3)
+    if x == 0:
+        return 0.0
+    y = x
+    while True:
+        f = y**3-x
+        if abs(f) < 1e-12:
+            return float(y)
+        f_prime = 3*y**2
+        if f_prime == 0:
+            y += 1
+        else:
+            y -= f/f_prime
+
+def derivative(func: 'function', value: float | complex) -> float | complex:
+    """
+    Return the derivative of a function 'func' at a specific value.
+    """
+    h=1e-10
+    ans=(func(value+h)-func(value))/h
+    return ans
 
 def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solutions: int=None , interval_start: float=float("-inf"), interval_end: float=float("inf"), deprived_start: float=None, deprived_end: float=None, deprived_values: list=None) -> list:
     """
@@ -61,7 +380,6 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
             for value in deprived_values:
                 if type(value) != float and type(value) != int:
                     raise TypeError("Deprived values of the list must be float or integer.")
-    print("Solving... This will take up to 5 seconds.")
     def func(x):
         return eval(left_side)-eval(right_side)
     R_solutions = []
@@ -260,8 +578,8 @@ def main():
         solve = equation_solver(expression, real=real, cplx=cplx, max_solutions=max_solutions, interval_start=interval_start, interval_end=interval_end, deprived_start=deprived_start, deprived_end=deprived_end, deprived_values=deprived_values)
         solve = st.success(solve)
     data = {
-        'Operation/Function': ["+","-","*","/","**","%","//","sqrt(x)","cbrt(x)","sin(x)","cos(x)","tan(x)","cot(x)","sec(x)","csc(x)","asin(x)","acos(x)","atan(x)","acot(x)","asec(x)","acsc(x)","sinh(x)","cosh(x)","tanh(x)","coth(x)","sech(x)","csch(x)","floor(x)","ceil(x)","gcd(a, b)","lcm(a, b)","factorial(x)","integrate(function, a, b)","exp(x)","log(a, base=10)","ln(x)","derivative(function, value)"],
-        'Name': ["Addition","Subtraction","Multiplication","Division","Exponentiation","Modulus","Floor division","Square root","Cubic root","Sine","Cosine","Tangent","Cotangent","Secant","Cosecant","arc Sine","arc Cosine","arc Tangent","arc Cotangent","arc Secant","arc Cosecant","Hyperbolic Sine","Hyperbolic Cosine","Hyperbolic Tangent","Hyperbolic Cotangent","Hyperbolic Secant","Hyperbolic Cosecant","Floor","Ceiling","Greatest Common Divisor","Least Common Multiple","Factorial","Integral","Exponential","Logarithm","Natural Logarithm","Derivative"]
+        'Operation/Function': ["+","-","*","/","**","%","//","sqrt(x)","cbrt(x)","sin(x, deg=False)","cos(x, deg=False)","tan(x, deg=False)","cot(x, deg=False)","sec(x, deg=False)","csc(x, deg=False)","asin(x)","acos(x)","atan(x)","acot(x)","asec(x)","acsc(x)","sinh(x)","cosh(x)","tanh(x)","coth(x)","sech(x)","csch(x)","floor(x)","ceil(x)","gcd(a, b)","lcm(a, b)","factorial(x)","integrate(integrand, a, b)","exp(x)","log(a, base=10)","ln(x)","derivative(func, value)"],
+        'Name': ["Addition","Subtraction","Multiplication","Division","Exponentiation","Modulus","Floor division","Square root","Cubic root","Sine","Cosine","Tangent","Cotangent","Secant","Cosecant","arc Sine","arc Cosine","arc Tangent","arc Cotangent","arc Secant","arc Cosecant","Hyperbolic Sine","Hyperbolic Cosine","Hyperbolic Tangent","Hyperbolic Cotangent","Hyperbolic Secant","Hyperbolic Cosecant","Floor","Ceiling","Greatest Common Divisor","Least Common Multiple","Factorial","Integral of integrand (function type)","Exponential","Logarithm","Natural Logarithm","Derivative"]
     }
     st.table(data)
 
