@@ -1,8 +1,14 @@
-from AzizKitten import *
 import streamlit as st
 from random import randint
 from threading import Thread
 from time import sleep
+import sys
+import subprocess
+
+def install_package(package_name):
+    python_executable = sys.executable
+    install_command = [python_executable, "-m", "pip", "install", "--upgrade", package_name]
+    subprocess.run(install_command, check=True)
 
 def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solutions: int=None , interval_start: float=float("-inf"), interval_end: float=float("inf"), deprived_start: float=None, deprived_end: float=None, deprived_values: list=None) -> list:
     """
@@ -253,11 +259,12 @@ def main():
         solve = equation_solver(expression, real=real, cplx=cplx, max_solutions=max_solutions, interval_start=interval_start, interval_end=interval_end, deprived_start=deprived_start, deprived_end=deprived_end, deprived_values=deprived_values)
         solve = st.success(solve)
     data = {
-    '0': ["+ Addition","- Subtraction","* Multiplication","/ Division","** Exponentiation","% Modulus","// Floor division","sqrt() Square root","cbrt() Cubic root","sin() Sine","cos() Cosine","tan() Tangent","cot() Cotangent"],
-    '1': ["sec() Secant","csc() Cosecant","asin() arc Sine","acos() arc Cosine","atan() arc Tangent","acot() arc Cotangent","asec() arc Secant","acsc() arc Cosecant","sinh() Hyperbolic Sine","cosh() Hyperbolic Cosine","tanh() Hyperbolic Tangent","coth() Hyperbolic Cotangent"],
-    '2': ["sech() Hyperbolic Secant","csch() Hyperbolic Cosecant","floor() Floor","ceil() Ceiling","gcd(a, b) Greatest Common Divisor","lcm(a, b) Least Common Multiple","factorial() Factorial","integrate(function, a, b) Integral","exp() Exponential","log(x, base=10) Logarithm","ln() Natural Logarithm","derivative(function, value) Derivative"]
+        'Operation/Function': ["+","-","*","/","**","%","//","sqrt(x)","cbrt(x)","sin(x)","cos(x)","tan(x)","cot(x)","sec(x)","csc(x)","asin(x)","acos(x)","atan(x)","acot(x)","asec(x)","acsc(x)","sinh(x)","cosh(x)","tanh(x)","coth(x)","sech(x)","csch(x)","floor(x)","ceil(x)","gcd(a, b)","lcm(a, b)","factorial(x)","integrate(function, a, b)","exp(x)","log(a, base=10)","ln(x)","derivative(function, value)"],
+        'Name': ["Addition","Subtraction","Multiplication","Division","Exponentiation","Modulus","Floor division","Square root","Cubic root","Sine","Cosine","Tangent","Cotangent","Secant","Cosecant","arc Sine","arc Cosine","arc Tangent","arc Cotangent","arc Secant","arc Cosecant","Hyperbolic Sine","Hyperbolic Cosine","Hyperbolic Tangent","Hyperbolic Cotangent","Hyperbolic Secant","Hyperbolic Cosecant","Floor","Ceiling","Greatest Common Divisor","Least Common Multiple","Factorial","Integral","Exponential","Logarithm","Natural Logarithm","Derivative"]
     }
     st.table(data)
     
 if __name__ == "__main__":
     main()
+    install_package("AzizKitten")
+    from AzizKitten import *
