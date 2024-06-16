@@ -566,7 +566,7 @@ def main():
         cplx = True
     else:
         cplx = False
-    max_solutions = st.number_input("Enter maximum amount of solutions: (Optional)", value=None ,min_value=0, max_value=None, step=1)
+    max_solutions = st.number_input("Maximum amount of solutions: (Optional)", value=None ,min_value=0, max_value=None, step=1)
     col1, col2 = st.columns(2)
     with col1:
         i_s = st.text_input("Interval start: (Leave it empty for -infinity)")
