@@ -2,6 +2,8 @@ import streamlit as st
 from random import randint
 from threading import Thread
 from time import sleep
+
+inf = float("inf")
 e = 2.718281828459045090795598298427648842334747314453125
 pi = 3.141592653589793115997963468544185161590576171875
 
@@ -569,8 +571,8 @@ def main():
     max_solutions = st.number_input("Maximum amount of solutions: (Optional)", value=None ,min_value=0, max_value=None, step=1)
     col1, col2 = st.columns(2)
     with col1:
-        i_s = st.text_input("Interval start: (Leave it empty for -infinity)")
-        i_e = st.text_input("Interval end: (leave it empty for +infinity)")
+        i_s = st.text_input("Interval start: (Default -inf)")
+        i_e = st.text_input("Interval end: (Default +inf)")
     with col2:
         d_s = st.text_input("Deprived interval start: (Optional)")
         d_e = st.text_input("Deprived interval end: (Optional)")
