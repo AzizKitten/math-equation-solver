@@ -356,15 +356,15 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
     else:
         raise TypeError("Value input must be a positive integer.")
     if not expression.count("=") == 1:
-        raise ValueError("The expression must contain only one '='.")
+        raise SyntaxError("The expression must contain only one '='.")
     left_side = expression.split("=")[0].replace(" ", "")
     right_side = expression.split("=")[1].replace(" ","")
     if len(left_side) == left_side.count(" ") or len(right_side) == right_side.count(" "):
-        raise ValueError("Left/right hand side cannot be empty.")
+        raise SyntaxError("Left/right hand side cannot be empty.")
     if (expression.replace(" ","")).count("x") == 0:
-        raise ValueError("The expression must contain the variable x.")
+        raise SyntaxError("The expression must contain the variable x.")
     if any(left_side[-1] == avoid for avoid in ["-","+","*","/","%"]) or any(left_side[0] == avoid for avoid in ["*","/","%"]) or any(right_side[0] == avoid for avoid in ["*","/","%"]) or any(right_side[-1] == avoid for avoid in ["-","+","*","/","%"]):
-        raise ValueError("The expression contains uncompleted operation.")
+        raise SyntaxError("The expression contains uncompleted operation.")
     if interval_end < interval_start:
         raise ValueError("The interval_start must be less than or equal to the interval_end.")
     if (deprived_start != None and deprived_end == None) or (deprived_start == None and deprived_end != None):
