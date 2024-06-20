@@ -357,8 +357,8 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
         raise TypeError("Value input must be a positive integer.")
     if not expression.count("=") == 1:
         raise SyntaxError("The expression must contain only one '='.")
-    left_side = expression.split("=")[0].replace(" ", "")
-    right_side = expression.split("=")[1].replace(" ","")
+    left_side = (expression.split("=")[0].replace(" ", "")).replace("^","**")
+    right_side = (expression.split("=")[1].replace(" ","")).replace("^","**")
     if len(left_side) == left_side.count(" ") or len(right_side) == right_side.count(" "):
         raise SyntaxError("Left/right hand side cannot be empty.")
     if (expression.replace(" ","")).count("x") == 0:
