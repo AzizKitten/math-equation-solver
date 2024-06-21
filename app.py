@@ -155,6 +155,7 @@ def integrate(integrand, lower_limit: float, upper_limit: float) -> float:
         x_i = lower_limit + i * segment_width
         result += integrand(x_i)
     result *= segment_width
+    return result
 
 def factorial(x: float) -> float:
     """
