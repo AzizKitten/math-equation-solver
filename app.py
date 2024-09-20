@@ -4,8 +4,10 @@ from threading import Thread
 from time import sleep
 import matplotlib.pyplot as plt
 from numpy import linspace
+from matplotlib.ticker import MultipleLocator
 from PIL import Image
-from AzizKitten import sqrt, cbrt, sin, cos, tan, cot, sec, csc, asin, acos, atan, acot, asec, acsc, sinh, cosh, tanh, sech, coth, floor, ceil, gcd, lcm, factorial, integrate, log, exp, ln, derivative, inf, e, pi
+from AzizKitten import sqrt, cbrt, sin, cos, tan, cot, sec, csc, asin, acos, atan, acot, asec, acsc, sinh, cosh, tanh, sech, coth, gcd, lcm, factorial, integrate, log, ln, derivative, inf, e, pi
+from re import split as splt
 
 def plot_sqrt(x):
     return x**.5
@@ -309,72 +311,79 @@ def main():
 
         fig, ax = plt.subplots(figsize=(5, 4))
 
-        if left_side.count("j") == 0:
-            ax.plot(x, c1(x), label=f"y = {((((left_side.replace("plot_sqrt", "sqrt")).replace("plot_cbrt", "cbrt")).replace("plot_ln", "ln")).replace("plot_asin", "asin")).replace("**", "^")}")
-            if right_side.count("j") == 0:
-                ax.plot(x, c2(x), label=f"y = {((((right_side.replace("plot_sqrt", "sqrt")).replace("plot_cbrt", "cbrt")).replace("plot_ln", "ln")).replace("plot_asin", "asin")).replace("**", "^")}")
-            ax.set_facecolor("#131720")
-            ax.tick_params(axis='x', colors='white')
-            ax.tick_params(axis='y', colors='white')
-            ax.spines['left'].set_position('zero')
-            ax.spines['bottom'].set_position('zero')
-            ax.spines['left'].set_color('white')
-            ax.spines['bottom'].set_color('white')
-            ax.spines['right'].set_color('none')
-            ax.spines['top'].set_color('none')
-            ax.xaxis.set_ticks_position('bottom')
-            ax.yaxis.set_ticks_position('left')
-            ax.grid(True, which='both')
-            ax.minorticks_on()
-            ax.grid(True, which='major', color='#262730', linewidth=0.5)
-            ax.grid(True, which='minor', color='#2d2e39', linewidth=0.5)
-            plt.legend(loc="upper left")
-            plt.xlim((-11, 11))
-            plt.ylim((-11, 11))
-            plt.tight_layout()
-            plot = plt.savefig('plot.png')
-            image = Image.open('plot.png')
-            width, height = image.size
-            left = 19
-            top = 15
-            right = width - 15
-            bottom = height - 15
-            image = image.crop((left, top, right, bottom))
-            plot = st.image(image)
-        elif right_side.count("j") == 0:
-            ax.plot(x, c2(x), label=f"y = {(((right_side.replace("plot_sqrt", "sqrt")).replace("plot_cbrt", "cbrt")).replace("plot_ln", "ln")).replace("plot_asin", "asin")}")
-            ax.set_facecolor("#131720")
-            ax.tick_params(axis='x', colors='white')
-            ax.tick_params(axis='y', colors='white')
-            ax.spines['left'].set_position('zero')
-            ax.spines['bottom'].set_position('zero')
-            ax.spines['left'].set_color('white')
-            ax.spines['bottom'].set_color('white')
-            ax.spines['right'].set_color('none')
-            ax.spines['top'].set_color('none')
-            ax.xaxis.set_ticks_position('bottom')
-            ax.yaxis.set_ticks_position('left')
-            ax.grid(True, which='both')
-            ax.minorticks_on()
-            ax.grid(True, which='major', color='#262730', linewidth=0.5)
-            ax.grid(True, which='minor', color='#2d2e39', linewidth=0.5)
-            plt.legend(loc="upper left")
-            plt.xlim((-11, 11))
-            plt.ylim((-11, 11))
-            plt.tight_layout()
-            plot = plt.savefig('plot.png')
-            image = Image.open('plot.png')
-            width, height = image.size
-            left = 19
-            top = 15
-            right = width - 15
-            bottom = height - 15
-            image = image.crop((left, top, right, bottom))
-            plot = st.image(image)
-
+        try:
+            if left_side.count("j") == 0:
+                ax.plot(x, c1(x), label=f"y = {((((left_side.replace("plot_sqrt", "sqrt")).replace("plot_cbrt", "cbrt")).replace("plot_ln", "ln")).replace("plot_asin", "asin")).replace("**", "^")}")
+                if right_side.count("j") == 0:
+                    ax.plot(x, c2(x), label=f"y = {((((right_side.replace("plot_sqrt", "sqrt")).replace("plot_cbrt", "cbrt")).replace("plot_ln", "ln")).replace("plot_asin", "asin")).replace("**", "^")}")
+                ax.set_facecolor("#131720")
+                ax.tick_params(axis='x', colors='white')
+                ax.tick_params(axis='y', colors='white')
+                ax.spines['left'].set_position('zero')
+                ax.spines['bottom'].set_position('zero')
+                ax.spines['left'].set_color('white')
+                ax.spines['bottom'].set_color('white')
+                ax.spines['right'].set_color('none')
+                ax.spines['top'].set_color('none')
+                ax.xaxis.set_ticks_position('bottom')
+                ax.yaxis.set_ticks_position('left')
+                ax.grid(True, which='both')
+                ax.minorticks_on()
+                ax.grid(True, which='major', color='#262730', linewidth=0.5)
+                ax.grid(True, which='minor', color='#2d2e39', linewidth=0.5)
+                plt.legend(loc="upper left")
+                ax.xaxis.set_major_locator(MultipleLocator(2))
+                ax.yaxis.set_major_locator(MultipleLocator(2))
+                plt.xlim((-11, 11))
+                plt.ylim((-11, 11))
+                plt.tight_layout()
+                plot = plt.savefig('plot.png')
+                image = Image.open('plot.png')
+                width, height = image.size
+                left = 19
+                top = 15
+                right = width - 15
+                bottom = height - 15
+                image = image.crop((left, top, right, bottom))
+                plot = st.image(image)
+            elif right_side.count("j") == 0:
+                ax.plot(x, c2(x), label=f"y = {(((right_side.replace("plot_sqrt", "sqrt")).replace("plot_cbrt", "cbrt")).replace("plot_ln", "ln")).replace("plot_asin", "asin")}")
+                ax.set_facecolor("#131720")
+                ax.tick_params(axis='x', colors='white')
+                ax.tick_params(axis='y', colors='white')
+                ax.spines['left'].set_position('zero')
+                ax.spines['bottom'].set_position('zero')
+                ax.spines['left'].set_color('white')
+                ax.spines['bottom'].set_color('white')
+                ax.spines['right'].set_color('none')
+                ax.spines['top'].set_color('none')
+                ax.xaxis.set_ticks_position('bottom')
+                ax.yaxis.set_ticks_position('left')
+                ax.grid(True, which='both')
+                ax.minorticks_on()
+                ax.grid(True, which='major', color='#262730', linewidth=0.5)
+                ax.grid(True, which='minor', color='#2d2e39', linewidth=0.5)
+                plt.legend(loc="upper left")
+                ax.xaxis.set_major_locator(MultipleLocator(2))
+                ax.yaxis.set_major_locator(MultipleLocator(2))
+                plt.xlim((-11, 11))
+                plt.ylim((-11, 11))
+                plt.tight_layout()
+                plot = plt.savefig('plot.png')
+                image = Image.open('plot.png')
+                width, height = image.size
+                left = 19
+                top = 15
+                right = width - 15
+                bottom = height - 15
+                image = image.crop((left, top, right, bottom))
+                plot = st.image(image)
+        except:
+            pass
+        
     data = {
-        'Operation/Function': ["+","-","*","/","** or ^","%","//","sqrt(x)","cbrt(x)","sin(x, deg=False)","cos(x, deg=False)","tan(x, deg=False)","cot(x, deg=False)","sec(x, deg=False)","csc(x, deg=False)","asin(x)","acos(x)","atan(x)","acot(x)","asec(x)","acsc(x)","sinh(x)","cosh(x)","tanh(x)","coth(x)","sech(x)","csch(x)","floor(x)","ceil(x)","gcd(a, b)","lcm(a, b)","factorial(x)","integrate(integrand, a, b)","exp(x)","log(a, base=10)","ln(x)","derivative(func, value)"],
-        'Name': ["Addition","Subtraction","Multiplication","Division","Exponentiation","Modulus","Floor division","Square root","Cubic root","Sine","Cosine","Tangent","Cotangent","Secant","Cosecant","arc Sine","arc Cosine","arc Tangent","arc Cotangent","arc Secant","arc Cosecant","Hyperbolic Sine","Hyperbolic Cosine","Hyperbolic Tangent","Hyperbolic Cotangent","Hyperbolic Secant","Hyperbolic Cosecant","Floor","Ceiling","Greatest Common Divisor","Least Common Multiple","Factorial","Integral of integrand (function type)","Exponential","Logarithm","Natural Logarithm","Derivative"]
+        'Operation/Function': ["+","-","*","/","** or ^","%","//","sqrt(x)","cbrt(x)","sin(x)","cos(x)","tan(x)","cot(x)","sec(x)","csc(x)","asin(x)","acos(x)","atan(x)","acot(x)","asec(x)","acsc(x)","sinh(x)","cosh(x)","tanh(x)","coth(x)","sech(x)","csch(x)","gcd(a, b)","lcm(a, b)","factorial(x)","integrate(integrand, a, b)","log(a)","ln(x)","derivative(func, value)"],
+        'Name': ["Addition","Subtraction","Multiplication","Division","Exponentiation","Modulus","Floor division","Square root","Cubic root","Sine","Cosine","Tangent","Cotangent","Secant","Cosecant","arc Sine","arc Cosine","arc Tangent","arc Cotangent","arc Secant","arc Cosecant","Hyperbolic Sine","Hyperbolic Cosine","Hyperbolic Tangent","Hyperbolic Cotangent","Hyperbolic Secant","Hyperbolic Cosecant","Greatest Common Divisor","Least Common Multiple","Factorial","Integral of integrand (function type)","Logarithm","Natural Logarithm","Derivative"]
     }
     st.table(data)
 
