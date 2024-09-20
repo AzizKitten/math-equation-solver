@@ -25,7 +25,7 @@ def plot_asin(x):
 
 def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solutions: int=None , interval_start: float=float("-inf"), interval_end: float=float("inf"), deprived_start: float=None, deprived_end: float=None, deprived_values: list=None) -> list:
     """
-    return the solutions for the giving expression.
+    return the solutions for the given expression.
     # Exemples:
     - equation_solver("abs(sin(x)) = 0.5", interval_start=0, interval_end=2*pi, deprived_values=[5*pi/6])
     
@@ -77,7 +77,7 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
     try:
         func(test)
     except SyntaxError:
-        raise SyntaxError("There was a problem in the giving expression.")
+        raise SyntaxError("There was a problem in the given expression.")
     except:
         pass
     R_solutions = []
