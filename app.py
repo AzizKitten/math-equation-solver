@@ -71,15 +71,25 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
             for value in deprived_values:
                 if type(value) != float and type(value) != int:
                     raise TypeError("Deprived values of the list must be float or integer.")
+    
+    n = left_side.count("lambda")
+    for i in range(n):
+        index = left_side.find("lambda")
+        left_side = left_side[:index+6] + " " + left_side[index+6:]
+    n = right_side.count("lambda")
+    for i in range(n):
+        index = right_side.find("lambda")
+        right_side = right_side[:index+6] + " " + right_side[index+6:]
+    
     def func(x):
         return eval(left_side)-eval(right_side)
+    
     test = 0
     try:
         func(test)
     except SyntaxError:
         raise SyntaxError("There was a problem in the given expression.")
-    except:
-        pass
+    
     R_solutions = []
     C_solutions = []
     R_result = []
