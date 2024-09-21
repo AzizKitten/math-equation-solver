@@ -89,6 +89,8 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
         func(test)
     except SyntaxError:
         raise SyntaxError("There was a problem in the given expression.")
+    except:
+        pass
     
     R_solutions = []
     C_solutions = []
