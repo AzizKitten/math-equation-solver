@@ -248,8 +248,7 @@ st.set_page_config(
     page_icon="img/favicon.png"
 )
 
-def main():
-    st.markdown(
+st.markdown(
         """
         <style>
         .css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob,
@@ -261,6 +260,8 @@ def main():
         """,
         unsafe_allow_html=True
     )
+
+def main():
     st.title("Math equation solver")
     expression = st.text_input("Enter the expression: (Required)")
     cplx = False
