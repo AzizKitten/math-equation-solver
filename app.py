@@ -23,19 +23,6 @@ def plot_asin(x):
     return integrate(integrand, 0, x)
 
 def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solutions: int=None , interval_start: float=float("-inf"), interval_end: float=float("inf"), deprived_start: float=None, deprived_end: float=None, deprived_values: list=None) -> list:
-    """
-    return the solutions for the given expression.
-    # Exemples:
-    - equation_solver("abs(sin(x)) = 0.5", interval_start=0, interval_end=2*pi, deprived_values=[5*pi/6])
-    
- [0.5235987756, 3.6651914292, 5.7595865316]
-    # Important:
-    Allowed variable is only x.
-    # Why I don't get any result?
-    - Check the expression.
-    - Check the used functions.
-    - Give another try (Bot sometimes find it hard to solve from the first run).
-    """
     if type(max_solutions) is int:
         if max_solutions < 0:
             raise ValueError("Amount of solutions cannot be a negative number.")
@@ -262,6 +249,12 @@ st.set_page_config(
 )
 
 def main():
+    hide_github_icon = """
+    #GithubIcon {
+    visibility: hidden;
+    }
+    """
+    st.markdown(hide_github_icon, unsafe_allow_html=True)
     st.title("Math equation solver")
     expression = st.text_input("Enter the expression: (Required)")
     cplx = False
