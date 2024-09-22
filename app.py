@@ -7,7 +7,6 @@ from numpy import linspace
 from matplotlib.ticker import MultipleLocator
 from PIL import Image
 from AzizKitten import sqrt, cbrt, sin, cos, tan, cot, sec, csc, asin, acos, atan, acot, asec, acsc, sinh, cosh, tanh, sech, coth, gcd, lcm, factorial, integrate, log, ln, derivative, inf, e, pi
-from re import split as splt
 
 def plot_sqrt(x):
     return x**.5
@@ -71,7 +70,7 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
             for value in deprived_values:
                 if type(value) != float and type(value) != int:
                     raise TypeError("Deprived values of the list must be float or integer.")
-    
+
     n = left_side.count("lambda")
     for i in range(n):
         index = left_side.find("lambda")
@@ -80,6 +79,12 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
     for i in range(n):
         index = right_side.find("lambda")
         right_side = right_side[:index+6] + " " + right_side[index+6:]
+    for i in range(1, len(left_side)):
+        if left_side[i] == "x" and left_side[i-1].isdecimal():
+            left_side = left_side[:i] + "*" + left_side[i:]
+    for i in range(1, len(right_side)):
+        if right_side[i] == "x" and right_side[i-1].isdecimal():
+            right_side = right_side[:i] + "*" + right_side[i:]
     
     def func(x):
         return eval(left_side)-eval(right_side)
@@ -308,6 +313,20 @@ def main():
         expression = (((((expression.replace(" ", "")).replace("^", "**")).replace("sqrt", "plot_sqrt")).replace("cbrt", "plot_cbrt")).replace("ln", "plot_ln")).replace("asin", "plot_asin")
         left_side = expression.split("=")[0]
         right_side = expression.split("=")[1]
+        n = left_side.count("lambda")
+        for i in range(n):
+            index = left_side.find("lambda")
+            left_side = left_side[:index+6] + " " + left_side[index+6:]
+        n = right_side.count("lambda")
+        for i in range(n):
+            index = right_side.find("lambda")
+            right_side = right_side[:index+6] + " " + right_side[index+6:]
+        for i in range(1, len(left_side)):
+            if left_side[i] == "x" and left_side[i-1].isdecimal():
+                left_side = left_side[:i] + "*" + left_side[i:]
+        for i in range(1, len(right_side)):
+            if right_side[i] == "x" and right_side[i-1].isdecimal():
+                right_side = right_side[:i] + "*" + right_side[i:]
 
         def c1(x):
             if left_side.count("x") == 0:
