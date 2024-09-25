@@ -249,7 +249,7 @@ st.set_page_config(
 )
 
 hide_github_icon = """
-#GithubIcon { 
+#MainMenu { 
     visibility: hidden;
 }
 """
