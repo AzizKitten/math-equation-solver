@@ -248,26 +248,6 @@ st.set_page_config(
     page_icon="img/favicon.png"
 )
 
-hide_github_icon = """
-#MainMenu { 
-    visibility: hidden;
-}
-"""
-st.markdown(hide_github_icon, unsafe_allow_html=True)
-
-st.markdown(
-        """
-        <style>
-        .css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob,
-        .styles_viewerBadge__1yB5_, .viewerBadge_link__1S137,
-        .viewerBadge_text__1JaDK {
-            display: none;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
 def main():
     st.title("Math equation solver")
     expression = st.text_input("Enter the expression: (Required)")
