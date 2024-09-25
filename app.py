@@ -248,8 +248,7 @@ st.set_page_config(
     page_icon="img/favicon.png"
 )
 
-hide_github_icon = 
-"""
+hide_github_icon = """
 #GithubIcon { 
     visibility: hidden;
 }
