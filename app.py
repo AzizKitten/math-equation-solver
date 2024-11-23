@@ -1,5 +1,5 @@
 import streamlit as st
-from random import uniform
+from random import uniform, randint
 from threading import Thread
 from time import sleep
 import matplotlib.pyplot as plt
@@ -90,7 +90,7 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
     C_result = []
     status = True
     def solve_in_R():
-        x = 0
+        x = randint(-10, 10)
         while status:
             try:
                 f = func(x)
@@ -131,7 +131,7 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
             except:
                 x += 1
     def solve_in_C():
-        x = 1 + 1j
+        x = randint(-10,10) + randint(-10,10)*1j
         while status:
             try:
                 f = func(x)
@@ -161,7 +161,37 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
         Thread(target=solve_in_R).start()
         Thread(target=solve_in_R).start()
         Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
+        Thread(target=solve_in_R).start()
     if cplx:
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
+        Thread(target=solve_in_C).start()
         Thread(target=solve_in_C).start()
         Thread(target=solve_in_C).start()
         Thread(target=solve_in_C).start()
