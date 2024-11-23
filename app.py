@@ -1,5 +1,5 @@
 import streamlit as st
-from random import randint
+from random import uniform
 from threading import Thread
 from time import sleep
 import matplotlib.pyplot as plt
@@ -95,34 +95,34 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
             try:
                 f = func(x)
                 while type(f) is complex:
-                    x = randint(-100, 100)
+                    x = uniform(-100, 100)
                     f = func(x)
             except OverflowError or ValueError:
-                x = randint(-10, 10)
+                x = uniform(-10, 10)
                 continue
             except ZeroDivisionError:
                 x += 1
                 continue
             except:
                 if interval_start == float("-inf") and interval_end == float("inf"):
-                    x = randint(-100, 100)
+                    x = uniform(-100, 100)
                 elif interval_start == float("-inf") and interval_end != float("inf"):
-                    x = randint(-100, int(interval_end))
+                    x = uniform(-100, int(interval_end))
                 elif interval_start != float("-inf") and interval_end == float("inf"):
-                    x = randint(int(interval_start), 100)
+                    x = uniform(int(interval_start), 100)
                 else:
-                    x = randint(int(interval_start), int(interval_end))
+                    x = uniform(int(interval_start), int(interval_end))
                 continue
             if abs(f) < 1e-12:
                 R_solutions.append(x)
                 if interval_start == float("-inf") and interval_end == float("inf"):
-                    x = randint(-100,100)
+                    x = uniform(-100,100)
                 elif interval_start == float("-inf") and interval_end != float("inf"):
-                    x = randint(-100, int(interval_end))
+                    x = uniform(-100, int(interval_end))
                 elif interval_start != float("-inf") and interval_end == float("inf"):
-                    x = randint(int(interval_start), 100)
+                    x = uniform(int(interval_start), 100)
                 else:
-                    x = randint(int(interval_start),int(interval_end))
+                    x = uniform(int(interval_start),int(interval_end))
                 continue
             try:
                 f_prime = derivative(func, x)
@@ -138,17 +138,17 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
             except SyntaxError:
                 raise SyntaxError("There is a problem in the expression.")
             except OverflowError or ValueError:
-                x = randint(-10,10)+randint(-10, 10)*1j
+                x = uniform(-10,10)+uniform(-10, 10)*1j
                 continue
             except ZeroDivisionError:
                 x += 1 + 1j
                 continue
             except:
-                x = randint(-100, 100)+randint(-100, 100)*1j
+                x = uniform(-100, 100)+uniform(-100, 100)*1j
                 continue
             if abs(f) < 1e-12:
                 C_solutions.append(x)
-                x = randint(-100, 100)+randint(-100, 100)*1j
+                x = uniform(-100, 100)+uniform(-100, 100)*1j
                 continue
             try:
                 f_prime = derivative(func, x)
