@@ -90,7 +90,7 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
     C_result = []
     status = True
     def solve_in_R():
-        x = randint(-10, 10)
+        x = randint(-100, 100)
         while status:
             try:
                 f = func(x)
@@ -98,7 +98,7 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
                     x = uniform(-100, 100)
                     f = func(x)
             except OverflowError or ValueError:
-                x = uniform(-10, 10)
+                x = uniform(-100, 100)
                 continue
             except ZeroDivisionError:
                 x += 1
@@ -127,18 +127,17 @@ def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solu
             try:
                 f_prime = derivative(func, x)
                 x -= f/f_prime
-                
             except:
                 x += 1
     def solve_in_C():
-        x = randint(-10,10) + randint(-10,10)*1j
+        x = randint(-100,100) + randint(-100,100)*1j
         while status:
             try:
                 f = func(x)
             except SyntaxError:
                 raise SyntaxError("There is a problem in the expression.")
             except OverflowError or ValueError:
-                x = uniform(-10,10)+uniform(-10, 10)*1j
+                x = uniform(-100,100)+uniform(-100, 100)*1j
                 continue
             except ZeroDivisionError:
                 x += 1 + 1j
