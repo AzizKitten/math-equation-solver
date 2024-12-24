@@ -1,261 +1,121 @@
+import wolframalpha
 import streamlit as st
-from random import uniform, randint
-from threading import Thread
-from time import sleep
-import matplotlib.pyplot as plt
-from numpy import linspace
-from matplotlib.ticker import MultipleLocator
-from PIL import Image
-from AzizKitten import sqrt, cbrt, sin, cos, tan, cot, sec, csc, asin, acos, atan, acot, asec, acsc, sinh, cosh, tanh, sech, coth, gcd, lcm, factorial, integrate, log, ln, derivative, inf, e, pi
 
-def plot_sqrt(x):
-    return x**.5
+def send(query):
+    app_id = "J78J28-57PL462PJU"
 
-def plot_cbrt(x):
-    return abs(x)/x*abs(x)**(1/3)
+    client = wolframalpha.Client(app_id)
 
-def plot_ln(x):
-    return (x**1e-10 - 1)/1e-10
+    response = client.query(query)
 
-def plot_asin(x):
-    def integrand(t):
-        return 1/sqrt(1-t**2)
-    return integrate(integrand, 0, x)
+    if hasattr(response, 'pods'):
+        for pod in response.pods:
+            if pod.title in ["Alternate form","Alternate forms","Roots","Root", "Solution", "Solutions","Properties as a real function", "Derivative", "Indefinate integral", "Identities", "Global minima", "Global maxima", "Alternative representations", "Integral representations", "Alternative representation", "Integral representation", "Definite integral over a half-period", "Limit", "Limits","Definite integral", "Indefinite integral","Local minimum", "Local minimums", "Local maximum", "Local maximums", "Polynomial discriminant", "Result", "Sum convergence", "Partial sum formula", "Regularized result", "Decimal approximation", "Constant name", "Prime factorization", "Divisors", "Property", "Real solutions", "Complex solutions", "Integer solution", "Exact result", "Alternate complex forms", "Polar coordinates", "Numerical root"] or pod.title.startswith("All") or pod.title.startswith("Series") or pod.title.startswith("Input"):
+                st.text(pod.title)
+                for subpod in pod.subpods:
+                    if hasattr(subpod, 'plaintext'):
+                        if subpod.title != "":
+                            st.text(subpod.title + ":")
+                        expr = (((((((((((((subpod.plaintext.replace("element","∈")).replace("for", "∀")).replace("sum", "\sum")).replace("integral", "\int")).replace("->", "→")).replace("i x", "{ix}")).replace("!=", "≠)")).replace(">=", "≥")).replace("<=", "≤")).replace("as\suming", "assuming")).replace("polygamma", "ψ")).replace("gamma", "Γ")).replace("product", "\prod")).replace("lim", "\lim")
+                        while expr.find("_(") != -1:
+                            expr = expr[:expr.find("_(")]+"_{"+expr[expr.find("_(")+2:].replace(")", "}", 1)
+                        while expr.find("^(") != -1:
+                            expr = expr[:expr.find("^(")]+"^{"+expr[expr.find("^(")+2:].replace(")", "}", 1)
+                        expr = expr.replace(" ", "\hspace{1mm}")
+                        for i in range(expr.count("sqrt(")):
+                            p = expr.find("sqrt(")
+                            expr = expr[:p] + "\sqrt{" + expr[p+5:]
+                            cnt = 1
+                            ite = p+5
+                            while cnt > 0:
+                                if expr[ite] == "(":
+                                    cnt += 1
+                                    ite += 1
+                                elif expr[ite] == ")":
+                                    cnt -= 1
+                                    if cnt == 0:
+                                        expr = expr[:ite]+"}"+expr[ite+1:]
+                                        break
+                                    ite += 1
+                                else:
+                                    ite += 1
+                        for i in range(expr.count("abs(")):
+                            p = expr.find("abs(")
+                            expr = expr[:p] + "|" + expr[p+4:]
+                            cnt = 1
+                            ite = p+4
+                            while cnt > 0:
+                                if expr[ite] == "(":
+                                    cnt += 1
+                                    ite += 1
+                                elif expr[ite] == ")":
+                                    cnt -= 1
+                                    if cnt == 0:
+                                        expr = expr[:ite]+"|"+expr[ite+1:]
+                                        break
+                                    ite += 1
+                                else:
+                                    ite += 1
+                        for i in range(expr.count("cuberoot(")):
+                            p = expr.find("cuberoot(")
+                            expr = expr[:p] + "\sqrt[3]{" + expr[p+9:]
+                            cnt = 1
+                            ite = p+9
+                            while cnt > 0:
+                                if expr[ite] == "(":
+                                    cnt += 1
+                                    ite += 1
+                                elif expr[ite] == ")":
+                                    cnt -= 1
+                                    if cnt == 0:
+                                        expr = expr[:ite]+"}"+expr[ite+1:]
+                                        break
+                                    ite += 1
+                                else:
+                                    ite += 1
+                        for i in range(expr.count("floor(")):
+                            p = expr.find("floor(")
+                            expr = expr[:p] + r"\lfloor{" + expr[p+6:]
+                            cnt = 1
+                            ite = p+6
+                            while cnt > 0:
+                                if expr[ite] == "(":
+                                    cnt += 1
+                                    ite += 1
+                                elif expr[ite] == ")":
+                                    cnt -= 1
+                                    if cnt == 0:
+                                        expr = expr[:ite]+r"}\rfloor"+expr[ite+1:]
+                                        break
+                                    ite += 1
+                                else:
+                                    ite += 1
+                        for i in range(expr.count("ceiling(")):
+                            p = expr.find("ceiling(")
+                            expr = expr[:p] + r"\lceil{" + expr[p+8:]
+                            cnt = 1
+                            ite = p+8
+                            while cnt > 0:
+                                if expr[ite] == "(":
+                                    cnt += 1
+                                    ite += 1
+                                elif expr[ite] == ")":
+                                    cnt -= 1
+                                    if cnt == 0:
+                                        expr = expr[:ite]+r"}\rceil"+expr[ite+1:]
+                                        break
+                                    ite += 1
+                                else:
+                                    ite += 1
+                        for i in range(expr.count('log')):
+                            p = expr.find("log(")
 
-def equation_solver(expression: str, real: bool=True, cplx: bool=False, max_solutions: int=None , interval_start: float=float("-inf"), interval_end: float=float("inf"), deprived_start: float=None, deprived_end: float=None, deprived_values: list=None) -> list:
-    if type(max_solutions) is int:
-        if max_solutions < 0:
-            raise ValueError("Amount of solutions cannot be a negative number.")
-    elif max_solutions == None:
-        pass
+
+                        st.latex(expr)
+                        
+                st.text("-"*100)
     else:
-        raise TypeError("Value input must be a positive integer.")
-    if not expression.count("=") == 1:
-        raise SyntaxError("The expression must contain only one '='.")
-    left_side = (expression.split("=")[0].replace(" ", "")).replace("^","**")
-    right_side = (expression.split("=")[1].replace(" ","")).replace("^","**")
-    if len(left_side) == left_side.count(" ") or len(right_side) == right_side.count(" "):
-        raise SyntaxError("Left/right hand side cannot be empty.")
-    if (expression.replace(" ","")).count("x") == 0:
-        raise SyntaxError("The expression must contain the variable x.")
-    if any(left_side[-1] == avoid for avoid in ["-","+","*","/","%"]) or any(left_side[0] == avoid for avoid in ["*","/","%"]) or any(right_side[0] == avoid for avoid in ["*","/","%"]) or any(right_side[-1] == avoid for avoid in ["-","+","*","/","%"]):
-        raise SyntaxError("The expression contains uncompleted operation.")
-    if interval_end < interval_start:
-        raise ValueError("The interval_start must be less than or equal to the interval_end.")
-    if (deprived_start != None and deprived_end == None) or (deprived_start == None and deprived_end != None):
-        raise ValueError("Deprived interval must have an start/end.")
-    if deprived_start == deprived_end == None:
-        pass
-    elif deprived_start > deprived_end:
-        raise ValueError("The deprived interval_start must be less than or equal to the deprived interval_end.")
-    if deprived_values != None:
-        if type(deprived_values) is not list:
-            raise TypeError("Deprived_values type must be a list")
-        else:
-            if len(deprived_values) == 0:
-                raise ValueError("Deprived values cannot be an empty list.")
-            for value in deprived_values:
-                if type(value) != float and type(value) != int:
-                    raise TypeError("Deprived values of the list must be float or integer.")
-
-    n = left_side.count("lambda")
-    for i in range(n):
-        index = left_side.find("lambda")
-        left_side = left_side[:index+6] + " " + left_side[index+6:]
-    n = right_side.count("lambda")
-    for i in range(n):
-        index = right_side.find("lambda")
-        right_side = right_side[:index+6] + " " + right_side[index+6:]
-    for i in range(1, len(left_side)):
-        if left_side[i] == "x" and left_side[i-1].isdecimal():
-            left_side = left_side[:i] + "*" + left_side[i:]
-    for i in range(1, len(right_side)):
-        if right_side[i] == "x" and right_side[i-1].isdecimal():
-            right_side = right_side[:i] + "*" + right_side[i:]
-    
-    def func(x):
-        return eval(left_side)-eval(right_side)
-    
-    test = 0
-    try:
-        func(test)
-    except SyntaxError:
-        raise SyntaxError("There was a problem in the given expression.")
-    except:
-        pass
-    
-    R_solutions = []
-    C_solutions = []
-    R_result = []
-    C_result = []
-    status = True
-    def solve_in_R():
-        x = randint(-100, 100)
-        while status:
-            try:
-                f = func(x)
-                while type(f) is complex:
-                    x = uniform(-100, 100)
-                    f = func(x)
-            except OverflowError or ValueError:
-                x = uniform(-100, 100)
-                continue
-            except ZeroDivisionError:
-                x += 1
-                continue
-            except:
-                if interval_start == float("-inf") and interval_end == float("inf"):
-                    x = uniform(-100, 100)
-                elif interval_start == float("-inf") and interval_end != float("inf"):
-                    x = uniform(-100, int(interval_end))
-                elif interval_start != float("-inf") and interval_end == float("inf"):
-                    x = uniform(int(interval_start), 100)
-                else:
-                    x = uniform(int(interval_start), int(interval_end))
-                continue
-            if abs(f) < 1e-12:
-                R_solutions.append(x)
-                if interval_start == float("-inf") and interval_end == float("inf"):
-                    x = uniform(-100,100)
-                elif interval_start == float("-inf") and interval_end != float("inf"):
-                    x = uniform(-100, int(interval_end))
-                elif interval_start != float("-inf") and interval_end == float("inf"):
-                    x = uniform(int(interval_start), 100)
-                else:
-                    x = uniform(int(interval_start),int(interval_end))
-                continue
-            try:
-                f_prime = derivative(func, x)
-                x -= f/f_prime
-            except:
-                x += 1
-    def solve_in_C():
-        x = randint(-100,100) + randint(-100,100)*1j
-        while status:
-            try:
-                f = func(x)
-            except SyntaxError:
-                raise SyntaxError("There is a problem in the expression.")
-            except OverflowError or ValueError:
-                x = uniform(-100,100)+uniform(-100, 100)*1j
-                continue
-            except ZeroDivisionError:
-                x += 1 + 1j
-                continue
-            except:
-                x = uniform(-100, 100)+uniform(-100, 100)*1j
-                continue
-            if abs(f) < 1e-12:
-                C_solutions.append(x)
-                x = uniform(-100, 100)+uniform(-100, 100)*1j
-                continue
-            try:
-                f_prime = derivative(func, x)
-                x -= f/f_prime
-            except:
-                x += 1 + 1j
-    if real:
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        Thread(target=solve_in_R).start()
-        
-    if cplx:
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-        Thread(target=solve_in_C).start()
-    sleep(3)
-    status = False
-    eliminated_sol_from_R = []
-    for sol in R_solutions:
-        if type(sol) != complex:
-            eliminated_sol_from_R.append(sol)
-    R_solutions = eliminated_sol_from_R
-    if len(R_solutions) != 0:
-        R_solutions[0] = round(R_solutions[0],10)
-        R_result.append(R_solutions[0])
-        R_solutions.pop(0)
-        for solution in R_solutions:
-            if (not any(abs(solution - sol) < 1e-4 for sol in R_result)) and (solution - interval_start) >= -1e-6 and (interval_end - solution) >= -1e-6:
-                if deprived_start != None:
-                    if solution > deprived_end or solution < deprived_start:
-                        if deprived_values != None:
-                            if any((abs(solution - prv) < 1e-4) for prv in deprived_values):
-                                continue
-                            else:
-                                solution = round(solution,10)
-                                R_result.append(solution)
-                        else:
-                            solution = round(solution,10)
-                            R_result.append(solution)
-                else:
-                    if deprived_values != None:
-                        if all(abs(solution - prv) > 1e-4 for prv in deprived_values):
-                            solution = round(solution,10)
-                            R_result.append(solution)
-                    else:
-                        solution = round(solution,10)
-                        R_result.append(solution)
-        if (R_result[0] - interval_start) >= -1e-6 and (interval_end - R_result[0]) >= -1e-6:
-            if deprived_start != None:
-                    if R_result[0] > deprived_end or R_result[0] < deprived_start:
-                        if deprived_values != None:
-                            if any(abs(R_result[0] - prv) < 1e-4 for prv in deprived_values):
-                                R_result.pop(0)
-                    else:
-                        R_result.pop(0)
-            elif deprived_values != None:
-                if any(abs(R_result[0] - prv) < 1e-4 for prv in deprived_values):
-                    R_result.pop(0)
-        else:
-            R_result.pop(0)
-        R_result = sorted(R_result)
-        pos = []
-        neg = []
-        for sol in R_result:
-            if sol >= 0:
-                pos.append(sol)
-            else:
-                neg.append(sol)
-        R_result = pos + neg
-    if len(C_solutions) != 0:
-        C_solutions[0] = round(C_solutions[0].real, 10) + round(C_solutions[0].imag, 10) * 1j
-        if abs(C_solutions[0].imag) > 1e-4:
-            C_result.append(C_solutions[0])
-        C_solutions.pop(0)
-        for solution in C_solutions:
-            if not any(abs(solution - sol) < 1e-4 for sol in C_result):
-                solution = round(solution.real, 10) + round(solution.imag, 10) * 1j
-                if abs(solution.imag) > 1e-4:
-                    C_result.append(solution)
-    if max_solutions == None:
-        result = R_result + C_result
-    else:
-        result = []
-        for i in range(max_solutions):
-            if i <= len(R_result)-1:
-                result.append(R_result[i])
-        for i in range(max_solutions):
-            if i <= len(C_result)-1:
-                result.append(C_result[i])
-    return result
+        st.text("No results found")
 
 st.set_page_config(
     page_title="Aziz Bot",
@@ -263,161 +123,11 @@ st.set_page_config(
 )
 
 def main():
-    st.title("Math equation solver")
+    st.title("Math AI:")
     expression = st.text_input("Enter the expression: (Required)")
-    cplx = False
-    real = True
-    if st.checkbox("Real", value=True):
-        real = True
-    else:
-        real = False
-    if st.checkbox("Complex"):
-        cplx = True
-    else:
-        cplx = False
-    max_solutions = st.number_input("Maximum amount of solutions: (Optional)", value=None ,min_value=0, max_value=None, step=1)
-    col1, col2 = st.columns(2)
-    with col1:
-        i_s = st.text_input("Interval start: (Default -inf)")
-        i_e = st.text_input("Interval end: (Default +inf)")
-    with col2:
-        d_s = st.text_input("Deprived interval start: (Optional)")
-        d_e = st.text_input("Deprived interval end: (Optional)")
-    d_v = st.text_input("Deprived values: (Values must be separated by a comma)")
     if st.button("Sumbit"):
-        if i_s == "":
-            interval_start = float("-inf")
-        else:
-            interval_start = eval(i_s)
-        if i_e == "":
-            interval_end = float("inf")
-        else:
-            interval_end = eval(i_e)
-        if d_s == "":
-            deprived_start = None
-        else:
-            deprived_start = eval(d_s)
-        if d_e == "":
-            deprived_end = None
-        else:
-            deprived_end = eval(d_e)
-        if d_v == "":
-            deprived_values = None
-        else:
-            d_v_list = d_v.split(",")
-            deprived_values = []
-            for value in d_v_list:
-                deprived_values.append(eval(value))
-        sol = equation_solver(expression, real=real, cplx=cplx, max_solutions=max_solutions, interval_start=interval_start, interval_end=interval_end, deprived_start=deprived_start, deprived_end=deprived_end, deprived_values=deprived_values)
-        solve = st.success(sol)
-
-        expression = (((((expression.replace(" ", "")).replace("^", "**")).replace("sqrt", "plot_sqrt")).replace("cbrt", "plot_cbrt")).replace("ln", "plot_ln")).replace("asin", "plot_asin")
-        left_side = expression.split("=")[0]
-        right_side = expression.split("=")[1]
-        n = left_side.count("lambda")
-        for i in range(n):
-            index = left_side.find("lambda")
-            left_side = left_side[:index+6] + " " + left_side[index+6:]
-        n = right_side.count("lambda")
-        for i in range(n):
-            index = right_side.find("lambda")
-            right_side = right_side[:index+6] + " " + right_side[index+6:]
-        for i in range(1, len(left_side)):
-            if left_side[i] == "x" and left_side[i-1].isdecimal():
-                left_side = left_side[:i] + "*" + left_side[i:]
-        for i in range(1, len(right_side)):
-            if right_side[i] == "x" and right_side[i-1].isdecimal():
-                right_side = right_side[:i] + "*" + right_side[i:]
-
-        def c1(x):
-            if left_side.count("x") == 0:
-                return eval(left_side) + 0*x
-            return eval(left_side)
-
-        def c2(x):
-            if right_side.count("x") == 0:
-                return eval(right_side) + 0*x
-            return eval(right_side)
+        send(expression)
         
-        x = linspace(-15, 15, 400)
-
-        fig, ax = plt.subplots(figsize=(5, 4))
-
-        try:
-            if left_side.count("j") == 0:
-                ax.plot(x, c1(x), label=f"y = {((((left_side.replace("plot_sqrt", "sqrt")).replace("plot_cbrt", "cbrt")).replace("plot_ln", "ln")).replace("plot_asin", "asin")).replace("**", "^")}")
-                if right_side.count("j") == 0:
-                    ax.plot(x, c2(x), label=f"y = {((((right_side.replace("plot_sqrt", "sqrt")).replace("plot_cbrt", "cbrt")).replace("plot_ln", "ln")).replace("plot_asin", "asin")).replace("**", "^")}")
-                ax.set_facecolor("#131720")
-                ax.tick_params(axis='x', colors='white')
-                ax.tick_params(axis='y', colors='white')
-                ax.spines['left'].set_position('zero')
-                ax.spines['bottom'].set_position('zero')
-                ax.spines['left'].set_color('white')
-                ax.spines['bottom'].set_color('white')
-                ax.spines['right'].set_color('none')
-                ax.spines['top'].set_color('none')
-                ax.xaxis.set_ticks_position('bottom')
-                ax.yaxis.set_ticks_position('left')
-                ax.grid(True, which='both')
-                ax.minorticks_on()
-                ax.grid(True, which='major', color='#262730', linewidth=0.5)
-                ax.grid(True, which='minor', color='#2d2e39', linewidth=0.5)
-                plt.legend(loc="upper left")
-                ax.xaxis.set_major_locator(MultipleLocator(2))
-                ax.yaxis.set_major_locator(MultipleLocator(2))
-                plt.xlim((-11, 11))
-                plt.ylim((-11, 11))
-                plt.tight_layout()
-                plot = plt.savefig('plot.png')
-                image = Image.open('plot.png')
-                width, height = image.size
-                left = 19
-                top = 15
-                right = width - 15
-                bottom = height - 15
-                image = image.crop((left, top, right, bottom))
-                plot = st.image(image)
-            elif right_side.count("j") == 0:
-                ax.plot(x, c2(x), label=f"y = {(((right_side.replace("plot_sqrt", "sqrt")).replace("plot_cbrt", "cbrt")).replace("plot_ln", "ln")).replace("plot_asin", "asin")}")
-                ax.set_facecolor("#131720")
-                ax.tick_params(axis='x', colors='white')
-                ax.tick_params(axis='y', colors='white')
-                ax.spines['left'].set_position('zero')
-                ax.spines['bottom'].set_position('zero')
-                ax.spines['left'].set_color('white')
-                ax.spines['bottom'].set_color('white')
-                ax.spines['right'].set_color('none')
-                ax.spines['top'].set_color('none')
-                ax.xaxis.set_ticks_position('bottom')
-                ax.yaxis.set_ticks_position('left')
-                ax.grid(True, which='both')
-                ax.minorticks_on()
-                ax.grid(True, which='major', color='#262730', linewidth=0.5)
-                ax.grid(True, which='minor', color='#2d2e39', linewidth=0.5)
-                plt.legend(loc="upper left")
-                ax.xaxis.set_major_locator(MultipleLocator(2))
-                ax.yaxis.set_major_locator(MultipleLocator(2))
-                plt.xlim((-11, 11))
-                plt.ylim((-11, 11))
-                plt.tight_layout()
-                plot = plt.savefig('plot.png')
-                image = Image.open('plot.png')
-                width, height = image.size
-                left = 19
-                top = 15
-                right = width - 15
-                bottom = height - 15
-                image = image.crop((left, top, right, bottom))
-                plot = st.image(image)
-        except:
-            pass
-        
-    data = {
-        'Operation/Function': ["+","-","*","/","** or ^","%","//","sqrt(x)","cbrt(x)","sin(x)","cos(x)","tan(x)","cot(x)","sec(x)","csc(x)","asin(x)","acos(x)","atan(x)","acot(x)","asec(x)","acsc(x)","sinh(x)","cosh(x)","tanh(x)","coth(x)","sech(x)","csch(x)","gcd(a, b)","lcm(a, b)","factorial(x)","integrate(integrand, a, b)","log(a)","ln(x)","derivative(func, value)"],
-        'Name': ["Addition","Subtraction","Multiplication","Division","Exponentiation","Modulus","Floor division","Square root","Cubic root","Sine","Cosine","Tangent","Cotangent","Secant","Cosecant","arc Sine","arc Cosine","arc Tangent","arc Cotangent","arc Secant","arc Cosecant","Hyperbolic Sine","Hyperbolic Cosine","Hyperbolic Tangent","Hyperbolic Cotangent","Hyperbolic Secant","Hyperbolic Cosecant","Greatest Common Divisor","Least Common Multiple","Factorial","Integral of integrand (function type)","Logarithm","Natural Logarithm","Derivative"]
-    }
-    st.table(data)
 
 if __name__ == "__main__":
     main()
