@@ -1,1 +1,4 @@
-wolframalpha
+numpy
+matplotlib
+Pillow
+AzizKitten
